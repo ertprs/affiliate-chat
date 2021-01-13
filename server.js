@@ -5,6 +5,7 @@ const BitlyClient = require('bitly').BitlyClient;
 const bitly = new BitlyClient('70434fe76cbd07eaa0094038542481b6ece6582c');
 var urlExpander=require('expand-url');
 const app=express();
+const port=process.env.PORT | "3000";
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
@@ -39,7 +40,7 @@ app.post('/message', async (req,res)=>{
         }))
     });
 })
-app.listen(3000,()=>console.log("Listning on port 3000"))
+app.listen(port,()=>console.log("Listning on port "+port))
 
 
 
