@@ -13,7 +13,10 @@ app.set('view engine', 'ejs')//Setting the view Engine
 app.use(express.static('public'))//creating a relative path to look for static files
 
 app.get('/',(req,res)=>{
-    res.render("./index.ejs");
+  res.render("./index.ejs");
+})
+app.get('/about',(req,res)=>{
+    res.render("./about.ejs");
 })
 function updateQueryStringParameter(uri, key, value) {
     var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");

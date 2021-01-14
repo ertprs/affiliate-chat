@@ -25,6 +25,7 @@
     height: 100vh;
     background-image: var(--body-bg);
     font-family: Helvetica, sans-serif;
+    margin: 0px;
   }
   
   .msger {
@@ -70,6 +71,7 @@
     margin-bottom: 10px;
   }
   .msg-text{
+    font-size: 30px;
     white-space:pre;
   }
   
@@ -122,11 +124,12 @@
   .msger-inputarea {
     display: flex;
     padding: 10px;
+    font-size: 30px;
     border-top: var(--border);
     background: #eee;
   }
   .msger-inputarea * {
-    padding: 10px;
+    padding: 50px;
     border: none;
     border-radius: 3px;
     font-size: 1em;

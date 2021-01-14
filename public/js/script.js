@@ -2,8 +2,21 @@ const msgerForm = get(".msger-inputarea");
 const msgerInput = get(".msger-input");
 const msgerChat = get(".msger-chat");
 
+
+const copyToClipboard = str => {
+  const el = document.createElement('textarea');
+    el.value = str;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    console.log(str);
+};
 const BOT_MSGS = [
-"Copy this messege and paste to all required groups"];
+"message copied to clipboard"];
 
 
 // Icons made by Freepik from www.flaticon.com
@@ -36,6 +49,7 @@ msgerForm.addEventListener("submit",event => {
   var exp_match = /(\b(https?|):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
   replaceAsync(msgText,exp_match,myAsyncFn).then((msg)=>{
     if (!msg) return;
+    copyToClipboard(msg);
     appendMessage(PERSON_NAME, PERSON_IMG, "right", msg);
     msgerInput.value = "";
     botResponse();
