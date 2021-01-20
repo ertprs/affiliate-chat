@@ -1,8 +1,7 @@
 const express = require("express");
 var bodyParser = require('body-parser')
 var cors = require('cors')
-const BitlyClient = require('bitly').BitlyClient;
-const bitly = new BitlyClient('262cbd72344da65ff07669570da0746dd6040d99');
+var shortUrl = require('node-url-shortener');
 var urlExpander=require('expand-url');
 const app=express();
 const port=process.env.PORT || 3000;
@@ -36,11 +35,10 @@ app.post('/message', async (req,res)=>{
             longUrl=updateQueryStringParameter(longUrl,"tag",tagName);
             console.log(longUrl)
         }
-        bitly.shorten(longUrl)
-        .then((response=>{
-            console.log(`Your shortened bitlink is ${response.link}`);
-            res.send(response.link);
-        }))
+        shortUrl.short('https://codeportal.in', function(err, url){
+          console.log(`Your shortened bitlink is ${url}`);
+          res.send(url);
+        });
     });
 })
 app.listen(port,()=>console.log("Listning on port "+port))
