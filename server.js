@@ -35,7 +35,7 @@ app.post('/message', async (req,res)=>{
             longUrl=updateQueryStringParameter(longUrl,"tag",tagName);
             console.log(longUrl)
         }
-        shortUrl.short('https://codeportal.in', function(err, url){
+        shortUrl.short(longUrl, function(err, url){
           console.log(`Your shortened bitlink is ${url}`);
           res.send(url);
         });
