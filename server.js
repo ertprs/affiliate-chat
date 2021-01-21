@@ -31,7 +31,12 @@ const BITLY_KEYS = [
   "ebe5029dc136f3f6b7cbbde2e66dfddc2a704fde",
   "e1dc43f2cf2e659f8d7c32d5e70ab2e961d58358",
   "4c33daeb7500649eab146ceee37c66d56169bd72",
-  "b4d04f6bcd20d88f5385f316ae965fe9faccc8dc"
+  "b4d04f6bcd20d88f5385f316ae965fe9faccc8dc",
+  "fc7c9dc1b80ad42af34dbcbd5dbce66ac39c2f3a",
+  "67c62d9e3729657a4280f1fe798216f5d7bc5a38",
+  "70434fe76cbd07eaa0094038542481b6ece6582c",
+  "c939c4a909c7f85a5345804671fe1fb0dd686a3f",
+  "28f94cd2a77055a6ce638baa6e304bbfbde5620f"
 ];
 let ubitly = unlimited_bitly.init(BITLY_KEYS);
 app.get('/',(req,res)=>{
