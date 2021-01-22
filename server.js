@@ -59,24 +59,24 @@ function updateQueryStringParameter(uri, key, value) {
 app.post('/message', async (req,res)=>{
     var x=req.body.url;
     urlExpander.expand(x, function(err, longUrl){
-      urlMetadata(longUrl).then(
-        function (metadata) { // success handler
-          longUrl=(metadata['og:url'])
-          updateQueryStringParameter(longUrl,"keywords","");
-          if(longUrl.includes("amazon")){
-              const tagName="freedeals0c-21";
-              longUrl=updateQueryStringParameter(longUrl,"tag",tagName);
-              console.log(longUrl)
-          }
-          ubitly.shorten(longUrl)
-          .then((response=>{
-              console.log(`Your shortened bitlink is ${response}`);
-              res.send(response);
-          })).catch(err=>console.log(err.message))
-        },
-        function (error) { // failure handler
-          console.log(error)
-        })
+      if(longUrl.includes("offertag"))
+        urlMetadata(longUrl).then(
+          function (metadata) { // success handler
+            longUrl=(metadata['og:url'])
+            longUrl = longUrl.substring(0, longUrl.indexOf('?'));
+            longUrl=longUrl.replace("/source=offertag.in","");
+            if(longUrl.includes("amazon")){
+                const tagName="freedeals0c-21";
+                longUrl=updateQueryStringParameter(longUrl,"tag",tagName);
+            }
+            ubitly.shorten(longUrl)
+            .then((response=>{
+                res.send(response);
+            })).catch(err=>console.log(err))
+          },
+          function (error) { // failure handler
+            console.log(error)
+          });
     });
 })
 app.listen(port,()=>console.log("Listning on port "+port))
