@@ -21,6 +21,7 @@
     "express": "^4.17.1",
     "follow-redirect-url": "^1.0.5",
     "node-url-shortener": "^1.1.11",
-    "string-replace-async": "^2.0.0"
+    "string-replace-async": "^2.0.0",
+    "url-metadata": "^2.5.0"
   }
 }

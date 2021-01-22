@@ -1,5 +1,6 @@
 const express = require("express");
 var bodyParser = require('body-parser')
+const urlMetadata = require('url-metadata')
 var cors = require('cors')
 const unlimited_bitly = require('@waynechang65/unlimited-bitly');
 const BitlyClient = require('bitly').BitlyClient;
@@ -58,16 +59,23 @@ function updateQueryStringParameter(uri, key, value) {
 app.post('/message', async (req,res)=>{
     var x=req.body.url;
     urlExpander.expand(x, function(err, longUrl){
-        if(longUrl.includes("amazon")){
-            const tagName="freedeals0c-21";
-            longUrl=updateQueryStringParameter(longUrl,"tag",tagName);
-            console.log(longUrl)
-        }
-        ubitly.shorten(longUrl)
-        .then((response=>{
-            console.log(`Your shortened bitlink is ${response}`);
-            res.send(response);
-        }))
+      urlMetadata(longUrl).then(
+        function (metadata) { // success handler
+          longUrl=(metadata['og:url'])
+          if(longUrl.includes("amazon")){
+              const tagName="freedeals0c-21";
+              longUrl=updateQueryStringParameter(longUrl,"tag",tagName);
+              console.log(longUrl)
+          }
+          ubitly.shorten(longUrl)
+          .then((response=>{
+              console.log(`Your shortened bitlink is ${response}`);
+              res.send(response);
+          })).catch(err=>console.log(err.message))
+        },
+        function (error) { // failure handler
+          console.log(error)
+        })
     });
 })
 app.listen(port,()=>console.log("Listning on port "+port))
