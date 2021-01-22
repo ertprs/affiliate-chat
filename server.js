@@ -62,6 +62,7 @@ app.post('/message', async (req,res)=>{
       urlMetadata(longUrl).then(
         function (metadata) { // success handler
           longUrl=(metadata['og:url'])
+          updateQueryStringParameter(longUrl,"keywords","");
           if(longUrl.includes("amazon")){
               const tagName="freedeals0c-21";
               longUrl=updateQueryStringParameter(longUrl,"tag",tagName);
