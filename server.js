@@ -1,10 +1,8 @@
 const express = require("express");
-var bodyParser = require('body-parser')
-const urlMetadata = require('url-metadata')
-var cors = require('cors')
+var bodyParser = require('body-parser');
+const urlMetadata = require('url-metadata');
+var cors = require('cors');
 const unlimited_bitly = require('@waynechang65/unlimited-bitly');
-const BitlyClient = require('bitly').BitlyClient;
-const bitly = new BitlyClient('262cbd72344da65ff07669570da0746dd6040d99');
 var urlExpander=require('expand-url');
 const app=express();
 const port=process.env.PORT || 3000;
@@ -14,7 +12,7 @@ app.use(bodyParser.json());
 app.set('view engine', 'ejs')//Setting the view Engine
 app.use(express.static('public'))//creating a relative path to look for static files
 
-
+//Unlimited Bitlink API's
 const BITLY_KEYS = [
   "17b33ac5407436e4345af050a8e838281792f80e",
   "f2ff7682686e8ddecd4d2691f9a924050c0ad214",
@@ -37,15 +35,16 @@ const BITLY_KEYS = [
   "67c62d9e3729657a4280f1fe798216f5d7bc5a38",
   "70434fe76cbd07eaa0094038542481b6ece6582c",
   "c939c4a909c7f85a5345804671fe1fb0dd686a3f",
-  "28f94cd2a77055a6ce638baa6e304bbfbde5620f"
+  "28f94cd2a77055a6ce638baa6e304bbfbde5620f",
+  "262cbd72344da65ff07669570da0746dd6040d99"
 ];
 let ubitly = unlimited_bitly.init(BITLY_KEYS);
+
+//CHAT APPLICATION PAGE
 app.get('/',(req,res)=>{
   res.render("./index.ejs");
 })
-app.get('/about',(req,res)=>{
-    res.render("./about.ejs");
-})
+
 function updateQueryStringParameter(uri, key, value) {
     var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
     var separator = uri.indexOf('?') !== -1 ? "&" : "?";
@@ -56,27 +55,36 @@ function updateQueryStringParameter(uri, key, value) {
       return uri + separator + key + "=" + value;
     }
   }
-app.post('/message', async (req,res)=>{
-    var x=req.body.url;
-    urlExpander.expand(x, function(err, longUrl){
-      if(longUrl.includes("offertag"))
-        urlMetadata(longUrl).then(
-          function (metadata) { // success handler
-            longUrl=(metadata['og:url'])
-            longUrl = longUrl.substring(0, longUrl.indexOf('?'));
-            longUrl=longUrl.replace("/source=offertag.in","");
-            if(longUrl.includes("amazon")){
-                const tagName="freedeals0c-21";
-                longUrl=updateQueryStringParameter(longUrl,"tag",tagName);
-            }
-            ubitly.shorten(longUrl)
-            .then((response=>{
-                res.send(response);
-            })).catch(err=>console.log(err))
-          },
-          function (error) { // failure handler
-            console.log(error)
-          });
+  const shortenURL = async (longUrl,affiliateTag)=>{
+    if(longUrl.includes("amazon")){
+      longUrl=updateQueryStringParameter(longUrl,"tag",affiliateTag);
+    }
+    var response=await ubitly.shorten(longUrl);
+    return response;
+  }
+  const getSmallUrl=async (longUrl,affiliateTag,isOfferTag)=>{
+    if(isOfferTag){
+      var metadata=await urlMetadata(longUrl);
+      longUrl=(metadata['og:url'])
+      longUrl = longUrl.substring(0, longUrl.indexOf('?'));
+      longUrl=longUrl.replace("/source=offertag.in","");
+      var response=await shortenURL(longUrl,affiliateTag);
+      return response;
+    }
+    else
+      var response= await shortenURL(longUrl,affiliateTag);
+      return response;
+  }
+app.post('/message', (req,res)=>{
+    var urlReceived=req.body.url;
+    urlExpander.expand(urlReceived, async function(err, longUrl){
+      if(longUrl.includes("offertag")){
+        res.send(await getSmallUrl(longUrl,"freedeals0c-21",true));
+      }
+      else{
+        console.log(await getSmallUrl(longUrl,"freedeals0c-21",false));
+        res.send(await getSmallUrl(longUrl,"freedeals0c-21",false));
+      }
     });
 })
 app.listen(port,()=>console.log("Listning on port "+port))
